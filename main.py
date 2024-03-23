@@ -1,5 +1,6 @@
 import tkinter
 from PIL import ImageTk,Image
+import cryptocode
 
 FONT = ("Arial", 15, "normal")
 
@@ -40,11 +41,23 @@ key_label.pack()
 key_entry = tkinter.Entry()
 key_entry.pack()
 
+def save_to_file(text,filename):
+    with open(filename, "w") as file:
+        file.write(text)
+
 def save():
-    pass
+    encode_text = cryptocode.encrypt(secret_text.get("1.0", tkinter.END), key_entry.get())
+    save_to_file(title_entry.get(), filename="text.txt")
+    save_to_file(encode_text, filename="text.txt")
+    return encode_text
 
 def comeback():
-    pass
+    encode_text = ""
+    with open("text.txt", "r") as file:
+        encode_text = file.read()
+    decode_text = cryptocode.decrypt(encode_text, key_entry.get())
+    secret_text.delete("1.0", tkinter.END)
+    secret_text.insert("1.0", decode_text)
 
 #Sakla buton
 save_button = tkinter.Button(text="Kaydet ve Şifrele", command=save)
