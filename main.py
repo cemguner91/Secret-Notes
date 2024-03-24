@@ -3,6 +3,7 @@ from PIL import ImageTk,Image
 import cryptocode
 
 FONT = ("Arial", 15, "normal")
+title_sets = []
 
 #window
 window = tkinter.Tk()
@@ -41,23 +42,31 @@ key_label.pack()
 key_entry = tkinter.Entry()
 key_entry.pack()
 
+message_box = tkinter.Message()
+
 def save_to_file(text,filename):
     with open(filename, "w") as file:
         file.write(text)
 
 def save():
-    encode_text = cryptocode.encrypt(secret_text.get("1.0", tkinter.END), key_entry.get())
-    save_to_file(title_entry.get(), filename="text.txt")
-    save_to_file(encode_text, filename="text.txt")
-    return encode_text
+    if not title_entry.get() == "" or secret_text.get("1.0") == "" or key_entry == "":
+        encode_text = cryptocode.encrypt(secret_text.get("1.0", tkinter.END), key_entry.get())
+        save_to_file(encode_text, filename=f"{title_entry.get()}.txt")
+        title_sets.append(title_entry.get())
+        return encode_text
+    else:
+        print("Boş kaldı")
 
 def comeback():
     encode_text = ""
-    with open("text.txt", "r") as file:
+    with open(f"{title_entry.get()}.txt", "r") as file:
         encode_text = file.read()
-    decode_text = cryptocode.decrypt(encode_text, key_entry.get())
-    secret_text.delete("1.0", tkinter.END)
-    secret_text.insert("1.0", decode_text)
+        decode_text = cryptocode.decrypt(encode_text, key_entry.get())
+
+    if not decode_text == 0:
+        secret_text.delete("1.0", tkinter.END)
+        secret_text.insert("1.0", decode_text)
+    else: print("Şifre Hatalı")
 
 #Sakla buton
 save_button = tkinter.Button(text="Kaydet ve Şifrele", command=save)
