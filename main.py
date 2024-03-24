@@ -4,7 +4,6 @@ import cryptocode
 from tkinter import messagebox
 
 FONT = ("Arial", 15, "normal")
-title_sets = []
 
 #window
 window = tkinter.Tk()
@@ -43,22 +42,27 @@ key_label.pack()
 key_entry = tkinter.Entry()
 key_entry.pack()
 
+def delete():
+    secret_text.delete(0, tkinter.END)
+
 def save_to_file(text,filename):
-    with open(filename, "w") as file:
+    with open(filename, "a") as file:
         file.write(text)
 
 def save():
     if not title_entry.get() == "" or secret_text.get("1.0") == "" or key_entry.get() == "":
         encode_text = cryptocode.encrypt(secret_text.get("1.0", tkinter.END), key_entry.get())
-        save_to_file(encode_text, filename=f"{title_entry.get()}.txt")
-        title_sets.append(title_entry.get())
+        save_to_file(f"\nBaşlık:{title_entry.get()} " + "\n", filename="text.txt")
+        save_to_file(encode_text, filename="text.txt")
         return encode_text
+        delete()
+
     else:
         messagebox.showwarning("Dikkat","Lütfen Boş Alanları Doldurunuz")
 
 def comeback():
     encode_text = ""
-    with open(f"{title_entry.get()}.txt", "r") as file:
+    with open("text.txt", "r") as file:
         encode_text = file.read()
         decode_text = cryptocode.decrypt(encode_text, key_entry.get())
 
